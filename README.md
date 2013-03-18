@@ -7,3 +7,11 @@ Based on the excellent work on [openresty-statsd](https://github.com/lonelyplane
     bundle
     bundle exec rake openresty:install
     bundle exec foreman start nginx
+
+## On Debian/Ubuntu
+
+    apt-get install libreadline-dev libncurses5-dev libpcre3-dev libssl-dev perl
+
+## On OSX
+    
+    brew install pcre
