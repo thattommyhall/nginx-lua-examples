@@ -5,6 +5,7 @@ GEM
     foreman (0.39.0)
       term-ansicolor (~> 1.0.7)
       thor (>= 0.13.6)
+    memcache (1.2.13)
     rake (10.0.3)
     term-ansicolor (1.0.7)
     thor (0.17.0)
@@ -15,4 +16,5 @@ PLATFORMS
 DEPENDENCIES
   ansi
   foreman
+  memcache
   rake
