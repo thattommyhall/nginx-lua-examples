@@ -1,8 +1,15 @@
 local memcached = require "resty.memcached"
+local uri = ngx.var.uri
+local host = ngx.var.host
 
-local memc, err = memcached:new()
+local function identity(s)
+   return s
+end
+
+local memc, err = memcached:new{ key_transform = { identity, identity } }
 if not memc then
-   ngx.say("failed to instantiate memc: ", err)
+   ngx.log(ngx.ERR,"could not create memcache object")
+   ngx.exit(404)
    return
 end
 
@@ -10,31 +17,27 @@ memc:set_timeout(250)
 
 local ok, err = memc:connect("127.0.0.1", 11211)
 if not ok then
-   ngx.log("something")
-   ngx.say("failed to connect: ", err)
-   return
-end
-
-sitename = 'localhost'
-prefix_key = "p:" .. sitename
-ngx.log(ngx.ERR,'*' .. prefix_key .. '*')
-
-memc:set('test','hello',0)
-
-local res, flags, err = memc:get(prefix_key)
-
-if err then
-   ngx.log("something")
+   ngx.log(ngx.ERR,"failed to connect: ", err)
    ngx.exit(404)
    return
 end
 
-if not res then
+sitename = host
+prefix_key = "prefixfor:" .. sitename
+
+local prefix, flags, err = memc:get(prefix_key)
+if not prefix then
    ngx.log(ngx.ERR,"no prefix for " .. prefix_key)
    ngx.exit(404)
    return
 end
 
+page_key = prefix .. ':' .. uri
+local page, flags, err = memc:get(page_key)
+if not page then
+   ngx.log(ngx.ERR,"no page for " .. page_key)
+   ngx.exit(404)
+   return
+end
 
-ngx.say (res)
-
+ngx.print(page)
