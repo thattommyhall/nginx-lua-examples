@@ -40,4 +40,5 @@ if not page then
    return
 end
 
+ok, err = memc:set_keepalive('30000',5)
 ngx.print(page)
